@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800 font-sans antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-slate-800 font-semibold;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-700 text-white px-5 py-2.5 rounded-lg font-medium
+           hover:bg-primary-800 transition-colors duration-200 disabled:opacity-50
+           disabled:cursor-not-allowed focus:outline-none focus:ring-2
+           focus:ring-primary-500 focus:ring-offset-2;
+  }
+  .btn-outline {
+    @apply border border-primary-700 text-primary-700 px-5 py-2.5 rounded-lg
+           font-medium hover:bg-primary-50 transition-colors duration-200
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  .btn-ghost {
+    @apply text-slate-600 px-4 py-2 rounded-lg font-medium hover:bg-slate-100
+           transition-colors duration-200;
+  }
+  .input {
+    @apply w-full border border-slate-200 rounded-lg px-4 py-2.5 text-slate-800
+           placeholder-slate-400 focus:outline-none focus:ring-2
+           focus:ring-primary-500 focus:border-transparent transition-all
+           duration-200 bg-white;
+  }
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden;
+  }
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-free {
+    @apply badge bg-emerald-50 text-emerald-600;
+  }
+  .badge-paid {
+    @apply badge bg-amber-50 text-amber-500;
+  }
+  .badge-level {
+    @apply badge bg-primary-50 text-primary-700;
+  }
+}
