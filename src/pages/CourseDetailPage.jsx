@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import api from '../api/axios'
+import api, { MEDIA_BASE_URL } from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import Spinner from '../components/Spinner'
 
@@ -76,7 +76,7 @@ export default function CourseDetailPage() {
           {/* Thumbnail */}
           {course.thumbnail ? (
             <img
-              src={`http://127.0.0.1:8000${course.thumbnail}`}
+              src={`${MEDIA_BASE_URL}${course.thumbnail}`}
               alt={course.title}
               className="w-full rounded-xl object-cover h-56 sm:h-72"
             />

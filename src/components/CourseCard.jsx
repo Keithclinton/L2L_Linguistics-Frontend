@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { MEDIA_BASE_URL } from '../api/axios'
 
 const LEVEL_LABELS = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' }
 
@@ -11,7 +12,7 @@ export default function CourseCard({ course }) {
       <div className="h-40 bg-gradient-to-br from-primary-100 to-primary-200 relative overflow-hidden">
         {course.thumbnail ? (
           <img
-            src={`http://127.0.0.1:8000${course.thumbnail}`}
+            src={`${MEDIA_BASE_URL}${course.thumbnail}`}
             alt={course.title}
             className="w-full h-full object-cover"
           />

@@ -1,9 +1,10 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://127.0.0.1:8000/api'
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
+export const MEDIA_BASE_URL = API_URL.replace(/\/api\/?$/, '')
 
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -26,7 +27,7 @@ api.interceptors.response.use(
       const refresh = localStorage.getItem('refresh')
       if (refresh) {
         try {
-          const { data } = await axios.post(`${BASE_URL}/auth/token/refresh/`, { refresh })
+          const { data } = await axios.post(`${API_URL}/auth/token/refresh/`, { refresh })
           localStorage.setItem('access', data.access)
           if (data.refresh) localStorage.setItem('refresh', data.refresh)
           original.headers.Authorization = `Bearer ${data.access}`
