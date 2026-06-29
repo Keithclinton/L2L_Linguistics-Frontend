@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import Tooltip from './Tooltip'
+import sw from '../i18n/sw'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
@@ -55,34 +57,44 @@ export default function Navbar() {
                 </button>
                 {profileOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50">
-                    <Link
-                      to="/profile"
-                      onClick={() => setProfileOpen(false)}
-                      className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                    >
-                      My Profile
-                    </Link>
-                    <Link
-                      to="/my-enrollments"
-                      onClick={() => setProfileOpen(false)}
-                      className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                    >
-                      My Learning
-                    </Link>
+                    <Tooltip text={sw.myProfile} className="block" position="bottom">
+                      <Link
+                        to="/profile"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                      >
+                        My Profile
+                      </Link>
+                    </Tooltip>
+                    <Tooltip text={sw.myLearning} className="block" position="bottom">
+                      <Link
+                        to="/my-enrollments"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                      >
+                        My Learning
+                      </Link>
+                    </Tooltip>
                     <hr className="my-1 border-slate-100" />
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                    >
-                      Sign Out
-                    </button>
+                    <Tooltip text={sw.signOut} className="block" position="bottom">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        Sign Out
+                      </button>
+                    </Tooltip>
                   </div>
                 )}
               </div>
             ) : (
               <>
-                <Link to="/login" className="btn-ghost text-sm">Sign In</Link>
-                <Link to="/register" className="btn-primary text-sm">Get Started</Link>
+                <Tooltip text={sw.signIn}>
+                  <Link to="/login" className="btn-ghost text-sm">Sign In</Link>
+                </Tooltip>
+                <Tooltip text={sw.getStarted}>
+                  <Link to="/register" className="btn-primary text-sm">Get Started</Link>
+                </Tooltip>
               </>
             )}
           </div>
@@ -116,31 +128,41 @@ export default function Navbar() {
             </NavLink>
             {user ? (
               <>
-                <NavLink
-                  to="/my-enrollments"
-                  onClick={() => setMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
-                >
-                  My Learning
-                </NavLink>
-                <NavLink
-                  to="/profile"
-                  onClick={() => setMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
-                >
-                  My Profile
-                </NavLink>
-                <button
-                  onClick={() => { handleLogout(); setMenuOpen(false) }}
-                  className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50"
-                >
-                  Sign Out
-                </button>
+                <Tooltip text={sw.myLearning} className="block" position="bottom">
+                  <NavLink
+                    to="/my-enrollments"
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  >
+                    My Learning
+                  </NavLink>
+                </Tooltip>
+                <Tooltip text={sw.myProfile} className="block" position="bottom">
+                  <NavLink
+                    to="/profile"
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  >
+                    My Profile
+                  </NavLink>
+                </Tooltip>
+                <Tooltip text={sw.signOut} className="block" position="bottom">
+                  <button
+                    onClick={() => { handleLogout(); setMenuOpen(false) }}
+                    className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50"
+                  >
+                    Sign Out
+                  </button>
+                </Tooltip>
               </>
             ) : (
               <div className="flex gap-2 px-3 pt-2">
-                <Link to="/login" onClick={() => setMenuOpen(false)} className="btn-outline text-sm flex-1 text-center">Sign In</Link>
-                <Link to="/register" onClick={() => setMenuOpen(false)} className="btn-primary text-sm flex-1 text-center">Get Started</Link>
+                <Tooltip text={sw.signIn} className="flex-1 block">
+                  <Link to="/login" onClick={() => setMenuOpen(false)} className="btn-outline text-sm w-full text-center block">Sign In</Link>
+                </Tooltip>
+                <Tooltip text={sw.getStarted} className="flex-1 block">
+                  <Link to="/register" onClick={() => setMenuOpen(false)} className="btn-primary text-sm w-full text-center block">Get Started</Link>
+                </Tooltip>
               </div>
             )}
           </div>

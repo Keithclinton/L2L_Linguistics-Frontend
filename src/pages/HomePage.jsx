@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import CourseCard from '../components/CourseCard'
 import Spinner from '../components/Spinner'
+import Tooltip from '../components/Tooltip'
+import sw from '../i18n/sw'
 
 export default function HomePage() {
   const [courses, setCourses] = useState([])
@@ -31,18 +33,22 @@ export default function HomePage() {
             From greetings to fluency — structured courses, real lessons, and a community of learners.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              to="/courses"
-              className="bg-white text-primary-700 px-7 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-colors"
-            >
-              Browse Courses
-            </Link>
-            <Link
-              to="/register"
-              className="border border-white/40 text-white px-7 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors"
-            >
-              Sign Up Free
-            </Link>
+            <Tooltip text={sw.browseCourses}>
+              <Link
+                to="/courses"
+                className="bg-white text-primary-700 px-7 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-colors"
+              >
+                Browse Courses
+              </Link>
+            </Tooltip>
+            <Tooltip text={sw.signUpFree}>
+              <Link
+                to="/register"
+                className="border border-white/40 text-white px-7 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors"
+              >
+                Sign Up Free
+              </Link>
+            </Tooltip>
           </div>
         </div>
       </section>
@@ -70,7 +76,9 @@ export default function HomePage() {
             <h2 className="text-2xl font-bold text-slate-800">Featured Courses</h2>
             <p className="text-slate-500 mt-1 text-sm">Start learning today — some are completely free</p>
           </div>
-          <Link to="/courses" className="btn-outline text-sm hidden sm:block">View all</Link>
+          <Tooltip text={sw.viewAll} className="hidden sm:inline-block">
+            <Link to="/courses" className="btn-outline text-sm">View all</Link>
+          </Tooltip>
         </div>
 
         {loading ? (
@@ -86,7 +94,9 @@ export default function HomePage() {
         )}
 
         <div className="text-center mt-8 sm:hidden">
-          <Link to="/courses" className="btn-outline">View all courses</Link>
+          <Tooltip text={sw.viewAllCourses}>
+            <Link to="/courses" className="btn-outline">View all courses</Link>
+          </Tooltip>
         </div>
       </section>
 
@@ -95,9 +105,11 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 text-center">
           <h2 className="text-2xl font-bold mb-3">Ready to start your journey?</h2>
           <p className="text-slate-300 mb-7">Create a free account and begin learning Kiswahili today.</p>
-          <Link to="/register" className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
-            Create Free Account
-          </Link>
+          <Tooltip text={sw.createFreeAccount}>
+            <Link to="/register" className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+              Create Free Account
+            </Link>
+          </Tooltip>
         </div>
       </section>
     </div>

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import Spinner from '../components/Spinner'
+import Tooltip from '../components/Tooltip'
+import sw from '../i18n/sw'
 
 export default function LessonPage() {
   const { id } = useParams()
@@ -49,7 +51,9 @@ export default function LessonPage() {
               d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
           <p className="text-slate-600 mb-6">{error}</p>
-          <Link to="/courses" className="btn-primary">Browse Courses</Link>
+          <Tooltip text={sw.browseCourses}>
+            <Link to="/courses" className="btn-primary">Browse Courses</Link>
+          </Tooltip>
         </div>
       </div>
     )
@@ -112,9 +116,11 @@ export default function LessonPage() {
             )}
           </div>
           {!completed && (
-            <button onClick={markComplete} disabled={marking} className="btn-primary text-sm">
-              {marking ? 'Saving…' : 'Mark Complete'}
-            </button>
+            <Tooltip text={sw.markComplete}>
+              <button onClick={markComplete} disabled={marking} className="btn-primary text-sm">
+                {marking ? 'Saving…' : 'Mark Complete'}
+              </button>
+            </Tooltip>
           )}
         </div>
       </div>

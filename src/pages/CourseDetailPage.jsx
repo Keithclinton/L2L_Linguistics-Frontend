@@ -3,6 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import api, { MEDIA_BASE_URL } from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import Spinner from '../components/Spinner'
+import Tooltip from '../components/Tooltip'
+import sw from '../i18n/sw'
 
 const LEVEL_LABELS = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' }
 
@@ -50,12 +52,14 @@ export default function CourseDetailPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <Link to="/courses" className="text-sm text-slate-500 hover:text-primary-700 flex items-center gap-1 mb-6">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Back to Courses
-      </Link>
+      <Tooltip text={sw.backToCourses}>
+        <Link to="/courses" className="text-sm text-slate-500 hover:text-primary-700 flex items-center gap-1 mb-6">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Courses
+        </Link>
+      </Tooltip>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main */}
@@ -182,19 +186,23 @@ export default function CourseDetailPage() {
                   You are enrolled
                 </div>
                 {course.lessons?.[0] && (
-                  <Link to={`/lessons/${course.lessons[0].id}`} className="btn-primary w-full text-center block">
-                    Continue Learning
-                  </Link>
+                  <Tooltip text={sw.continueLearning} className="block w-full">
+                    <Link to={`/lessons/${course.lessons[0].id}`} className="btn-primary w-full text-center block">
+                      Continue Learning
+                    </Link>
+                  </Tooltip>
                 )}
               </div>
             ) : (
-              <button
-                onClick={handleEnroll}
-                disabled={enrolling}
-                className="btn-primary w-full"
-              >
-                {enrolling ? 'Processing…' : isFree ? 'Enroll for Free' : 'Enroll Now'}
-              </button>
+              <Tooltip text={isFree ? sw.enrollFree : sw.enrollNow} className="block w-full">
+                <button
+                  onClick={handleEnroll}
+                  disabled={enrolling}
+                  className="btn-primary w-full"
+                >
+                  {enrolling ? 'Processing…' : isFree ? 'Enroll for Free' : 'Enroll Now'}
+                </button>
+              </Tooltip>
             )}
 
             <ul className="text-sm text-slate-600 space-y-2">

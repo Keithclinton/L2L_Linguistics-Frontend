@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import Tooltip from '../components/Tooltip'
+import sw from '../i18n/sw'
 
 export default function RegisterPage() {
   const { register, login } = useAuth()
@@ -98,6 +100,7 @@ export default function RegisterPage() {
                 />
                 <button
                   type="button"
+                  title={sw.togglePassword}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
@@ -131,14 +134,18 @@ export default function RegisterPage() {
               )}
             </div>
 
-            <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
-              {loading ? 'Creating account…' : 'Create Account'}
-            </button>
+            <Tooltip text={sw.createAccount} className="block w-full">
+              <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
+                {loading ? 'Creating account…' : 'Create Account'}
+              </button>
+            </Tooltip>
           </form>
 
           <p className="text-center text-sm text-slate-500 mt-6">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary-700 font-medium hover:underline">Sign in</Link>
+            <Tooltip text={sw.alreadyHaveAccount}>
+              <Link to="/login" className="text-primary-700 font-medium hover:underline">Sign in</Link>
+            </Tooltip>
           </p>
         </div>
       </div>

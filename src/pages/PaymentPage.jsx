@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
+import Tooltip from '../components/Tooltip'
+import sw from '../i18n/sw'
 
 export default function PaymentPage() {
   const location = useLocation()
@@ -15,7 +17,9 @@ export default function PaymentPage() {
     return (
       <div className="max-w-md mx-auto px-4 py-20 text-center">
         <p className="text-slate-500 mb-4">No course selected for payment.</p>
-        <Link to="/courses" className="btn-primary">Browse Courses</Link>
+        <Tooltip text={sw.browseCourses}>
+          <Link to="/courses" className="btn-primary">Browse Courses</Link>
+        </Tooltip>
       </div>
     )
   }
@@ -67,14 +71,18 @@ export default function PaymentPage() {
               <p className="text-xs text-slate-400 mt-1">Enter the number to receive the M-Pesa STK push</p>
             </div>
 
-            <button type="submit" disabled={loading} className="btn-primary w-full">
-              {loading ? 'Initiating payment…' : 'Pay Now'}
-            </button>
+            <Tooltip text={sw.payNow} className="block w-full">
+              <button type="submit" disabled={loading} className="btn-primary w-full">
+                {loading ? 'Initiating payment…' : 'Pay Now'}
+              </button>
+            </Tooltip>
           </form>
 
-          <Link to={`/courses/${course.id}`} className="block text-center text-sm text-slate-400 hover:text-slate-600 mt-4">
-            Cancel
-          </Link>
+          <Tooltip text={sw.cancel} className="block">
+            <Link to={`/courses/${course.id}`} className="block text-center text-sm text-slate-400 hover:text-slate-600 mt-4">
+              Cancel
+            </Link>
+          </Tooltip>
         </div>
       </div>
     </div>

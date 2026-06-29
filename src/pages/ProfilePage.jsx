@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
+import Tooltip from '../components/Tooltip'
+import sw from '../i18n/sw'
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth()
@@ -131,9 +133,11 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex justify-end">
-            <button type="submit" disabled={saving} className="btn-primary">
-              {saving ? 'Saving…' : 'Save Changes'}
-            </button>
+            <Tooltip text={sw.saveChanges}>
+              <button type="submit" disabled={saving} className="btn-primary">
+                {saving ? 'Saving…' : 'Save Changes'}
+              </button>
+            </Tooltip>
           </div>
         </form>
       </div>
@@ -172,9 +176,11 @@ export default function ProfilePage() {
           ))}
 
           <div className="flex justify-end">
-            <button type="submit" disabled={changingPw} className="btn-primary">
-              {changingPw ? 'Updating…' : 'Update Password'}
-            </button>
+            <Tooltip text={sw.updatePassword}>
+              <button type="submit" disabled={changingPw} className="btn-primary">
+                {changingPw ? 'Updating…' : 'Update Password'}
+              </button>
+            </Tooltip>
           </div>
         </form>
       </div>

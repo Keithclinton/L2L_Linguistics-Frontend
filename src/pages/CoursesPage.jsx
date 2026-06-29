@@ -3,6 +3,8 @@ import { useSearchParams } from 'react-router-dom'
 import api from '../api/axios'
 import CourseCard from '../components/CourseCard'
 import Spinner from '../components/Spinner'
+import Tooltip from '../components/Tooltip'
+import sw from '../i18n/sw'
 
 const LEVELS = [
   { value: '', label: 'All Levels' },
@@ -111,7 +113,9 @@ export default function CoursesPage() {
               d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <p className="text-lg">No courses match your filters.</p>
-          <button onClick={() => setSearchParams({})} className="btn-outline mt-4 text-sm">Clear filters</button>
+          <Tooltip text={sw.clearFilters}>
+            <button onClick={() => setSearchParams({})} className="btn-outline mt-4 text-sm">Clear filters</button>
+          </Tooltip>
         </div>
       ) : (
         <>

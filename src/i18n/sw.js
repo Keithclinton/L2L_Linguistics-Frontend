@@ -1,0 +1,29 @@
+// Swahili tooltip translations for button labels across the app
+const sw = {
+  signIn: 'Ingia',
+  getStarted: 'Anza',
+  myProfile: 'Wasifu Wangu',
+  myLearning: 'Masomo Yangu',
+  signOut: 'Toka',
+  browseCourses: 'Tazama Kozi',
+  signUpFree: 'Jisajili Bure',
+  viewAll: 'Tazama Zote',
+  viewAllCourses: 'Tazama Kozi Zote',
+  createFreeAccount: 'Fungua Akaunti Bure',
+  clearFilters: 'Futa Vichujio',
+  backToCourses: 'Rudi kwa Kozi',
+  enrollFree: 'Jiandikishe Bure',
+  enrollNow: 'Jiandikishe Sasa',
+  continueLearning: 'Endelea Kujifunza',
+  createAccount: 'Fungua Akaunti',
+  alreadyHaveAccount: 'Ingia',
+  saveChanges: 'Hifadhi Mabadiliko',
+  updatePassword: 'Sasisha Nenosiri',
+  viewCourse: 'Tazama Kozi',
+  markComplete: 'Weka Imekamilika',
+  payNow: 'Lipa Sasa',
+  cancel: 'Ghairi',
+  togglePassword: 'Onyesha/Ficha Nenosiri',
+}
+
+export default sw

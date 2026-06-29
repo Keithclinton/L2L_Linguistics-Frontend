@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import Tooltip from '../components/Tooltip'
+import sw from '../i18n/sw'
 
 export default function LoginPage() {
   const { login } = useAuth()
@@ -81,6 +83,7 @@ export default function LoginPage() {
                 />
                 <button
                   type="button"
+                  title={sw.togglePassword}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
@@ -98,16 +101,20 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
-              {loading ? 'Signing in…' : 'Sign In'}
-            </button>
+            <Tooltip text={sw.signIn} className="block w-full">
+              <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
+                {loading ? 'Signing in…' : 'Sign In'}
+              </button>
+            </Tooltip>
           </form>
 
           <p className="text-center text-sm text-slate-500 mt-6">
             Don&apos;t have an account?{' '}
-            <Link to="/register" className="text-primary-700 font-medium hover:underline">
-              Create one
-            </Link>
+            <Tooltip text={sw.createAccount}>
+              <Link to="/register" className="text-primary-700 font-medium hover:underline">
+                Create one
+              </Link>
+            </Tooltip>
           </p>
         </div>
       </div>
