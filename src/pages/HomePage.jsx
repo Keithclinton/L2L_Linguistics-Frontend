@@ -1,21 +1,37 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
-import CourseCard from '../components/CourseCard'
+import CourseCarousel from '../components/CourseCarousel'
+import FAQAccordion from '../components/FAQAccordion'
 import Spinner from '../components/Spinner'
 import Tooltip from '../components/Tooltip'
 import sw from '../i18n/sw'
+
+const STEPS = [
+  { title: 'Sign Up', desc: 'Create a free account in seconds — no payment needed to get started.' },
+  { title: 'Pick a Course', desc: 'Browse free and paid courses by level and topic, then enroll.' },
+  { title: 'Start Learning', desc: 'Work through lessons at your own pace, anytime, on any device.' },
+]
 
 export default function HomePage() {
   const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    api.get('/courses/?ordering=-created_at')
-      .then(({ data }) => setCourses(data.slice(0, 6)))
+    api.get('/courses/')
+      .then(({ data }) => setCourses(data))
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
+
+  const freeCourses = courses.filter((c) => parseFloat(c.price) === 0)
+
+  const categoryGroups = courses.reduce((acc, course) => {
+    const name = course.category?.name || 'Other'
+    if (!acc[name]) acc[name] = []
+    acc[name].push(course)
+    return acc
+  }, {})
 
   return (
     <div>
@@ -53,6 +69,25 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* How it works */}
+      <section className="bg-white border-b border-slate-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <h2 className="text-2xl font-bold text-slate-800 text-center mb-2">How It Works</h2>
+          <p className="text-slate-500 text-center mb-10 text-sm">Three simple steps to start learning Kiswahili</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {STEPS.map((step, i) => (
+              <div key={step.title} className="text-center">
+                <div className="w-12 h-12 rounded-full bg-primary-700 text-white flex items-center justify-center font-bold text-lg mx-auto mb-4">
+                  {i + 1}
+                </div>
+                <h3 className="font-semibold text-slate-800 mb-2">{step.title}</h3>
+                <p className="text-sm text-slate-500">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Stats strip */}
       <section className="bg-white border-b border-slate-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-3 gap-4 text-center">
@@ -69,11 +104,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured courses */}
+      {/* Course carousels */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-slate-800">Featured Courses</h2>
+            <h2 className="text-2xl font-bold text-slate-800">Explore Courses</h2>
             <p className="text-slate-500 mt-1 text-sm">Start learning today — some are completely free</p>
           </div>
           <Tooltip text={sw.viewAll} className="hidden sm:inline-block">
@@ -88,15 +123,27 @@ export default function HomePage() {
             <p className="text-lg">No courses yet — check back soon.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((course) => <CourseCard key={course.id} course={course} />)}
-          </div>
+          <>
+            <CourseCarousel title="Free Courses" courses={freeCourses} />
+            {Object.entries(categoryGroups).map(([name, list]) => (
+              <CourseCarousel key={name} title={name} courses={list} />
+            ))}
+          </>
         )}
 
-        <div className="text-center mt-8 sm:hidden">
+        <div className="text-center mt-4 sm:hidden">
           <Tooltip text={sw.viewAllCourses}>
             <Link to="/courses" className="btn-outline">View all courses</Link>
           </Tooltip>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="bg-white border-t border-slate-100">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <h2 className="text-2xl font-bold text-slate-800 text-center mb-2">Frequently Asked Questions</h2>
+          <p className="text-slate-500 text-center mb-8 text-sm">Quick answers about courses and payments</p>
+          <FAQAccordion />
         </div>
       </section>
 
