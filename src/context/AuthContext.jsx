@@ -1,4 +1,13 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  sendPasswordResetEmail,
+} from 'firebase/auth'
+import { auth, googleProvider, FIREBASE_CONFIGURED } from '../firebase'
 import api from '../api/axios'
 
 const AuthContext = createContext(null)
@@ -13,47 +22,58 @@ export function AuthProvider({ children }) {
       setUser(data)
     } catch {
       setUser(null)
-    } finally {
-      setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    if (localStorage.getItem('access')) {
-      fetchProfile()
-    } else {
+    if (!FIREBASE_CONFIGURED) {
       setLoading(false)
+      return
     }
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+      if (fbUser) {
+        await fetchProfile()
+      } else {
+        setUser(null)
+      }
+      setLoading(false)
+    })
+    return unsubscribe
   }, [fetchProfile])
 
   const login = async (email, password) => {
-    const { data } = await api.post('/auth/login/', { email, password })
-    localStorage.setItem('access', data.access)
-    localStorage.setItem('refresh', data.refresh)
+    if (!FIREBASE_CONFIGURED) throw new Error('Sign-in unavailable — Firebase not configured.')
+    await signInWithEmailAndPassword(auth, email, password)
+    await fetchProfile()
+  }
+
+  const loginWithGoogle = async () => {
+    if (!FIREBASE_CONFIGURED) throw new Error('Sign-in unavailable — Firebase not configured.')
+    await signInWithPopup(auth, googleProvider)
+    await fetchProfile()
+  }
+
+  const register = async ({ email, password, first_name, last_name, phone_number }) => {
+    if (!FIREBASE_CONFIGURED) throw new Error('Sign-up unavailable — Firebase not configured.')
+    await createUserWithEmailAndPassword(auth, email, password)
+    await api.patch('/auth/profile/', { first_name, last_name, phone_number: phone_number || '' })
     await fetchProfile()
   }
 
   const logout = async () => {
-    try {
-      const refresh = localStorage.getItem('refresh')
-      if (refresh) await api.post('/auth/logout/', { refresh })
-    } catch {
-      // ignore — clear session regardless
-    } finally {
-      localStorage.removeItem('access')
-      localStorage.removeItem('refresh')
-      setUser(null)
-    }
+    if (FIREBASE_CONFIGURED) await signOut(auth)
+    setUser(null)
   }
 
-  const register = async (payload) => {
-    await api.post('/auth/register/', payload)
+  const resetPassword = async (email) => {
+    if (!FIREBASE_CONFIGURED) throw new Error('Password reset unavailable — Firebase not configured.')
+    await sendPasswordResetEmail(auth, email)
   }
 
   const refreshUser = fetchProfile
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, register, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, loginWithGoogle, logout, register, resetPassword, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )

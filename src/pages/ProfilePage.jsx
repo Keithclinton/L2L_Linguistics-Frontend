@@ -5,7 +5,7 @@ import Tooltip from '../components/Tooltip'
 import sw from '../i18n/sw'
 
 export default function ProfilePage() {
-  const { user, refreshUser } = useAuth()
+  const { user, refreshUser, resetPassword } = useAuth()
 
   const [form, setForm] = useState({
     first_name: user?.first_name || '',
@@ -14,18 +14,13 @@ export default function ProfilePage() {
     bio: user?.bio || '',
     date_of_birth: user?.date_of_birth || '',
   })
-  const [pwForm, setPwForm] = useState({ old_password: '', new_password: '', new_password2: '' })
   const [saving, setSaving] = useState(false)
-  const [changingPw, setChangingPw] = useState(false)
   const [profileMsg, setProfileMsg] = useState(null)
-  const [pwMsg, setPwMsg] = useState(null)
-  const [pwErrors, setPwErrors] = useState({})
+  const [avatarUploading, setAvatarUploading] = useState(false)
+  const [resetMsg, setResetMsg] = useState(null)
+  const [resetLoading, setResetLoading] = useState(false)
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
-  const handlePwChange = (e) => {
-    setPwForm({ ...pwForm, [e.target.name]: e.target.value })
-    setPwErrors({ ...pwErrors, [e.target.name]: undefined })
-  }
 
   const saveProfile = async (e) => {
     e.preventDefault()
@@ -42,24 +37,32 @@ export default function ProfilePage() {
     }
   }
 
-  const changePassword = async (e) => {
-    e.preventDefault()
-    setChangingPw(true)
-    setPwMsg(null)
-    setPwErrors({})
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setAvatarUploading(true)
     try {
-      await api.post('/auth/profile/change-password/', pwForm)
-      setPwMsg({ type: 'success', text: 'Password changed successfully.' })
-      setPwForm({ old_password: '', new_password: '', new_password2: '' })
-    } catch (err) {
-      const data = err.response?.data
-      if (data && typeof data === 'object') {
-        setPwErrors(data)
-      } else {
-        setPwMsg({ type: 'error', text: 'Failed to change password.' })
-      }
+      const formData = new FormData()
+      formData.append('profile_picture', file)
+      await api.patch('/auth/profile/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      await refreshUser()
     } finally {
-      setChangingPw(false)
+      setAvatarUploading(false)
+    }
+  }
+
+  const handleResetPassword = async () => {
+    setResetLoading(true)
+    setResetMsg(null)
+    try {
+      await resetPassword(user.email)
+      setResetMsg({ type: 'success', text: `Password reset email sent to ${user.email}.` })
+    } catch (err) {
+      setResetMsg({ type: 'error', text: err.message || 'Failed to send reset email.' })
+    } finally {
+      setResetLoading(false)
     }
   }
 
@@ -71,14 +74,30 @@ export default function ProfilePage() {
 
       {/* Avatar & name */}
       <div className="card p-6 flex items-center gap-5">
-        <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xl font-bold flex-shrink-0">
-          {initials}
+        <div className="flex flex-col items-center gap-1">
+          <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xl font-bold flex-shrink-0 overflow-hidden">
+            {user?.profile_picture ? (
+              <img src={user.profile_picture} alt="" className="w-full h-full object-cover" />
+            ) : initials}
+          </div>
+          <label className="text-xs text-primary-700 cursor-pointer hover:underline">
+            {avatarUploading ? 'Uploading…' : 'Change photo'}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="hidden"
+              disabled={avatarUploading}
+            />
+          </label>
         </div>
         <div>
           <p className="font-semibold text-slate-800 text-lg">{user?.first_name} {user?.last_name}</p>
           <p className="text-slate-500 text-sm">{user?.email}</p>
           <p className="text-xs text-slate-400 mt-0.5">
-            Member since {user?.date_joined ? new Date(user.date_joined).toLocaleDateString('en-KE', { year: 'numeric', month: 'long' }) : '—'}
+            Member since {user?.date_joined
+              ? new Date(user.date_joined).toLocaleDateString('en-KE', { year: 'numeric', month: 'long' })
+              : '—'}
           </p>
         </div>
       </div>
@@ -88,7 +107,9 @@ export default function ProfilePage() {
         <h2 className="text-lg font-semibold text-slate-800 mb-5">Personal Information</h2>
 
         {profileMsg && (
-          <div className={`text-sm rounded-lg px-4 py-3 mb-5 ${profileMsg.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>
+          <div className={`text-sm rounded-lg px-4 py-3 mb-5 ${
+            profileMsg.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'
+          }`}>
             {profileMsg.text}
           </div>
         )}
@@ -142,47 +163,31 @@ export default function ProfilePage() {
         </form>
       </div>
 
-      {/* Change password */}
+      {/* Password reset */}
       <div className="card p-6">
-        <h2 className="text-lg font-semibold text-slate-800 mb-5">Change Password</h2>
+        <h2 className="text-lg font-semibold text-slate-800 mb-2">Password</h2>
+        <p className="text-sm text-slate-500 mb-5">
+          We'll send a password reset link to <span className="font-medium text-slate-700">{user?.email}</span>.
+        </p>
 
-        {pwMsg && (
-          <div className={`text-sm rounded-lg px-4 py-3 mb-5 ${pwMsg.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>
-            {pwMsg.text}
+        {resetMsg && (
+          <div className={`text-sm rounded-lg px-4 py-3 mb-5 ${
+            resetMsg.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'
+          }`}>
+            {resetMsg.text}
           </div>
         )}
 
-        <form onSubmit={changePassword} className="space-y-4">
-          {[
-            { name: 'old_password', label: 'Current Password' },
-            { name: 'new_password', label: 'New Password' },
-            { name: 'new_password2', label: 'Confirm New Password' },
-          ].map(({ name, label }) => (
-            <div key={name}>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">{label}</label>
-              <input
-                type="password"
-                name={name}
-                value={pwForm[name]}
-                onChange={handlePwChange}
-                className={`input ${pwErrors[name] ? 'border-red-300' : ''}`}
-              />
-              {pwErrors[name] && (
-                <p className="text-xs text-red-500 mt-1">
-                  {Array.isArray(pwErrors[name]) ? pwErrors[name].join(' ') : pwErrors[name]}
-                </p>
-              )}
-            </div>
-          ))}
-
-          <div className="flex justify-end">
-            <Tooltip text={sw.updatePassword}>
-              <button type="submit" disabled={changingPw} className="btn-primary">
-                {changingPw ? 'Updating…' : 'Update Password'}
-              </button>
-            </Tooltip>
-          </div>
-        </form>
+        <Tooltip text={sw.sendResetEmail}>
+          <button
+            type="button"
+            onClick={handleResetPassword}
+            disabled={resetLoading}
+            className="btn-outline"
+          >
+            {resetLoading ? 'Sending…' : 'Send Password Reset Email'}
+          </button>
+        </Tooltip>
       </div>
     </div>
   )

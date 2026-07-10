@@ -80,10 +80,10 @@ export default function LessonPage() {
         </div>
 
         {/* Video */}
-        {lesson.video_url && (
+        {lesson.embed_url && (
           <div className="rounded-xl overflow-hidden aspect-video bg-slate-900">
             <iframe
-              src={lesson.video_url}
+              src={lesson.embed_url}
               title={lesson.title}
               className="w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

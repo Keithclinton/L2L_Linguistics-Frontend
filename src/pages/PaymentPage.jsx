@@ -29,9 +29,24 @@ export default function PaymentPage() {
     setLoading(true)
     setMessage(null)
     try {
-      await api.post('/payments/initiate/', { course_id: course.id, phone_number: phone })
-      setMessage({ type: 'success', text: 'Payment initiated! You will receive a prompt on your phone shortly.' })
-      setTimeout(() => navigate(`/courses/${course.id}`), 3000)
+      const { data } = await api.post('/payments/initiate/', { course_id: course.id, phone_number: phone })
+      setMessage({ type: 'pending', text: 'Check your phone for the M-Pesa prompt…' })
+      const interval = setInterval(async () => {
+        try {
+          const res = await api.get(`/payments/${data.payment_id}/`)
+          if (res.data.status !== 'pending') {
+            clearInterval(interval)
+            if (res.data.status === 'completed') {
+              setMessage({ type: 'success', text: 'Payment successful! Redirecting…' })
+              setTimeout(() => navigate(`/courses/${course.id}`), 2000)
+            } else {
+              setMessage({ type: 'error', text: 'Payment failed. Please try again.' })
+            }
+          }
+        } catch {
+          clearInterval(interval)
+        }
+      }, 3000)
     } catch (err) {
       setMessage({ type: 'error', text: err.response?.data?.detail || 'Payment failed. Please try again.' })
     } finally {
@@ -39,12 +54,20 @@ export default function PaymentPage() {
     }
   }
 
+  const msgStyle = {
+    success: 'bg-emerald-50 text-emerald-700',
+    pending: 'bg-amber-50 text-amber-700',
+    error:   'bg-red-50 text-red-600',
+  }
+
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="card p-8">
           <h1 className="text-xl font-bold text-slate-800 mb-1">Complete Payment</h1>
-          <p className="text-slate-500 text-sm mb-6">Enrolling in <span className="font-medium text-slate-700">{course.title}</span></p>
+          <p className="text-slate-500 text-sm mb-6">
+            Enrolling in <span className="font-medium text-slate-700">{course.title}</span>
+          </p>
 
           <div className="bg-slate-50 rounded-lg px-4 py-3 flex items-center justify-between mb-6">
             <span className="text-slate-600 text-sm">Amount due</span>
@@ -52,7 +75,7 @@ export default function PaymentPage() {
           </div>
 
           {message && (
-            <div className={`text-sm rounded-lg px-4 py-3 mb-5 ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>
+            <div className={`text-sm rounded-lg px-4 py-3 mb-5 ${msgStyle[message.type]}`}>
               {message.text}
             </div>
           )}
@@ -72,7 +95,7 @@ export default function PaymentPage() {
             </div>
 
             <Tooltip text={sw.payNow} className="block w-full">
-              <button type="submit" disabled={loading} className="btn-primary w-full">
+              <button type="submit" disabled={loading || message?.type === 'pending'} className="btn-primary w-full">
                 {loading ? 'Initiating payment…' : 'Pay Now'}
               </button>
             </Tooltip>

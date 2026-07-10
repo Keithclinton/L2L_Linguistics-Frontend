@@ -80,7 +80,7 @@ export default function CourseDetailPage() {
           {/* Thumbnail */}
           {course.thumbnail ? (
             <img
-              src={`${MEDIA_BASE_URL}${course.thumbnail}`}
+              src={course.thumbnail.startsWith('http') ? course.thumbnail : `${MEDIA_BASE_URL}${course.thumbnail}`}
               alt={course.title}
               className="w-full rounded-xl object-cover h-56 sm:h-72"
             />

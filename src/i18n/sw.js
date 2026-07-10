@@ -24,6 +24,8 @@ const sw = {
   payNow: 'Lipa Sasa',
   cancel: 'Ghairi',
   togglePassword: 'Onyesha/Ficha Nenosiri',
+  subscribe: 'Jiandikishe',
+  sendResetEmail: 'Tuma Barua pepe ya Kuweka upya',
 }
 
 export default sw

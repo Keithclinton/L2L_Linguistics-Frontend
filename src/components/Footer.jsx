@@ -36,6 +36,10 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-slate-700 mt-8 pt-6 text-sm text-slate-400 text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <span className="text-xs text-slate-400 bg-slate-700/50 rounded-lg px-3 py-1.5">📱 Coming soon on the App Store</span>
+            <span className="text-xs text-slate-400 bg-slate-700/50 rounded-lg px-3 py-1.5">🤖 Coming soon on Google Play</span>
+          </div>
           © {new Date().getFullYear()} Ufasaha Wa Lugha. All rights reserved.
         </div>
       </div>

@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage'
 import MyEnrollmentsPage from './pages/MyEnrollmentsPage'
 import LessonPage from './pages/LessonPage'
 import PaymentPage from './pages/PaymentPage'
+import SubscribePage from './pages/SubscribePage'
 
 export default function App() {
   return (
@@ -36,6 +37,9 @@ export default function App() {
               } />
               <Route path="/my-enrollments" element={
                 <ProtectedRoute><MyEnrollmentsPage /></ProtectedRoute>
+              } />
+              <Route path="/subscribe" element={
+                <ProtectedRoute><SubscribePage /></ProtectedRoute>
               } />
             </Routes>
           </main>

@@ -51,7 +51,7 @@ export default function MyEnrollmentsPage() {
                 <div className="h-36 bg-gradient-to-br from-primary-100 to-primary-200 relative overflow-hidden">
                   {course.thumbnail ? (
                     <img
-                      src={`${MEDIA_BASE_URL}${course.thumbnail}`}
+                      src={course.thumbnail.startsWith('http') ? course.thumbnail : `${MEDIA_BASE_URL}${course.thumbnail}`}
                       alt={course.title}
                       className="w-full h-full object-cover"
                     />
