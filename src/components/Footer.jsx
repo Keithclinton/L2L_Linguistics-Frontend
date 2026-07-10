@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import logo from '../assets/logo-icon.png'
 
 export default function Footer() {
   return (
@@ -7,10 +8,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 bg-primary-500 rounded-md flex items-center justify-center">
-                <span className="text-white font-bold text-xs">KL</span>
-              </div>
-              <span className="font-semibold text-white">KiswahiliLMS</span>
+              <img src={logo} alt="Ufasaha Wa Lugha" className="w-7 h-7 object-contain" />
+              <span className="font-semibold text-white">Ufasaha Wa Lugha</span>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed">
               Learn Kiswahili at your own pace with structured courses taught by expert instructors.
@@ -37,7 +36,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-slate-700 mt-8 pt-6 text-sm text-slate-400 text-center">
-          © {new Date().getFullYear()} KiswahiliLMS. All rights reserved.
+          © {new Date().getFullYear()} Ufasaha Wa Lugha. All rights reserved.
         </div>
       </div>
     </footer>

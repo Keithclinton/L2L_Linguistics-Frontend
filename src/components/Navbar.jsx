@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Tooltip from './Tooltip'
 import sw from '../i18n/sw'
+import logo from '../assets/logo-icon.png'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
@@ -27,10 +28,8 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">KL</span>
-            </div>
-            <span className="font-semibold text-slate-800 text-lg">KiswahiliLMS</span>
+            <img src={logo} alt="Ufasaha Wa Lugha" className="w-9 h-9 object-contain" />
+            <span className="font-semibold text-slate-800 text-lg">Ufasaha Wa Lugha</span>
           </Link>
 
           {/* Desktop nav */}
