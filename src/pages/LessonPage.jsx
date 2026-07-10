@@ -4,6 +4,7 @@ import api from '../api/axios'
 import Spinner from '../components/Spinner'
 import Tooltip from '../components/Tooltip'
 import sw from '../i18n/sw'
+import highlightSwahili from '../utils/highlightSwahili'
 
 export default function LessonPage() {
   const { id } = useParams()
@@ -96,7 +97,7 @@ export default function LessonPage() {
           <div className="card p-6">
             <h2 className="text-base font-semibold text-slate-800 mb-3">Lesson Notes</h2>
             <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-wrap text-sm">
-              {lesson.content}
+              {highlightSwahili(lesson.content)}
             </div>
           </div>
         )}
