@@ -32,14 +32,20 @@ export function AuthProvider({ children }) {
     }
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
-        await fetchProfile()
+        try {
+          const { data } = await api.get('/auth/profile/')
+          setUser(data)
+        } catch {
+          // Backend unreachable or creds not yet configured — keep session alive with Firebase data
+          setUser({ email: fbUser.email, first_name: fbUser.displayName?.split(' ')[0] || fbUser.email.split('@')[0], last_name: '' })
+        }
       } else {
         setUser(null)
       }
       setLoading(false)
     })
     return unsubscribe
-  }, [fetchProfile])
+  }, [])
 
   const login = async (email, password) => {
     if (!FIREBASE_CONFIGURED) throw new Error('Sign-in unavailable — Firebase not configured.')
