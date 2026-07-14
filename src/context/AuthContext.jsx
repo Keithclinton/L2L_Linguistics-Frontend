@@ -16,12 +16,16 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const fetchProfile = useCallback(async () => {
+  const fetchProfile = useCallback(async (fbUser = null) => {
     try {
       const { data } = await api.get('/auth/profile/')
       setUser(data)
     } catch {
-      setUser(null)
+      if (fbUser) {
+        setUser({ email: fbUser.email, first_name: fbUser.displayName?.split(' ')[0] || fbUser.email.split('@')[0], last_name: '' })
+      } else {
+        setUser(null)
+      }
     }
   }, [])
 
@@ -32,38 +36,32 @@ export function AuthProvider({ children }) {
     }
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
-        try {
-          const { data } = await api.get('/auth/profile/')
-          setUser(data)
-        } catch {
-          // Backend unreachable or creds not yet configured — keep session alive with Firebase data
-          setUser({ email: fbUser.email, first_name: fbUser.displayName?.split(' ')[0] || fbUser.email.split('@')[0], last_name: '' })
-        }
+        await fetchProfile(fbUser)
       } else {
         setUser(null)
       }
       setLoading(false)
     })
     return unsubscribe
-  }, [])
+  }, [fetchProfile])
 
   const login = async (email, password) => {
     if (!FIREBASE_CONFIGURED) throw new Error('Sign-in unavailable — Firebase not configured.')
-    await signInWithEmailAndPassword(auth, email, password)
-    await fetchProfile()
+    const { user: fbUser } = await signInWithEmailAndPassword(auth, email, password)
+    await fetchProfile(fbUser)
   }
 
   const loginWithGoogle = async () => {
     if (!FIREBASE_CONFIGURED) throw new Error('Sign-in unavailable — Firebase not configured.')
-    await signInWithPopup(auth, googleProvider)
-    await fetchProfile()
+    const { user: fbUser } = await signInWithPopup(auth, googleProvider)
+    await fetchProfile(fbUser)
   }
 
   const register = async ({ email, password, first_name, last_name, phone_number }) => {
     if (!FIREBASE_CONFIGURED) throw new Error('Sign-up unavailable — Firebase not configured.')
-    await createUserWithEmailAndPassword(auth, email, password)
+    const { user: fbUser } = await createUserWithEmailAndPassword(auth, email, password)
     await api.patch('/auth/profile/', { first_name, last_name, phone_number: phone_number || '' })
-    await fetchProfile()
+    await fetchProfile(fbUser)
   }
 
   const logout = async () => {
